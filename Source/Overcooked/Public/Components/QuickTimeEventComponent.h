@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Overcooked/Public/Interfaces/QuickTimeEvent.h"
+#include "Overcooked/Public/QuickTimeEvent/QuickTimeEventAction.h"
 #include "QuickTimeEventComponent.generated.h"
 
 
@@ -16,6 +17,8 @@ class OVERCOOKED_API UQuickTimeEventComponent : public UActorComponent, public I
 #pragma region Variables
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UQuickTimeEventAction* MyAction;
 
 protected:
 

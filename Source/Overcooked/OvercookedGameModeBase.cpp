@@ -24,7 +24,7 @@ void AOvercookedGameModeBase::BeginPlay()
 
 		if (i == 0)
 		{
-			//First player controller is always created, so no need to create it
+			//First player controller is always created, no need to create it
 			APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 			PC->Possess(Cast<APlayerCharacter>(PlayerActor));
 		}
