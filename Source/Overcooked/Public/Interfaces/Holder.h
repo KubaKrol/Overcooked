@@ -7,6 +7,7 @@
 #include "Holder.generated.h"
 
 class IHoldable;
+class AItem;
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
@@ -29,4 +30,5 @@ public:
 	virtual IHoldable* GetHoldable() const;
 	virtual IHoldable* RemoveHoldable();
 	virtual USceneComponent* GetHoldingSceneComponent();
+	virtual void SpawnItem(TSubclassOf<AItem> Item);
 };

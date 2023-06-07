@@ -10,6 +10,9 @@
 #include "Overcooked/Public/Actors/Item.h"
 #include "Overcooked/Public/Interfaces/Holdable.h"
 #include "Overcooked/Public/Interfaces/Interactable.h"
+#include "Overcooked/Public/Interfaces/Holder.h"
+#include "Overcooked/Public/Components/HolderComponent.h"
+#include "Overcooked/Public/Components/InteractableComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Player/PlayerCharacter.h"
 
@@ -25,8 +28,7 @@ APlayerCharacter::APlayerCharacter()
     BoxComponent->SetCollisionObjectType(ECollisionChannel::ECC_Visibility);
     BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 
-    HoldLocation = CreateDefaultSubobject<USceneComponent>(TEXT("HoldLocation"));
-    HoldLocation->SetupAttachment(RootComponent);
+    HolderComponent = CreateDefaultSubobject<UHolderComponent>(TEXT("Holder"));
 }
 
 // Called when the game starts or when spawned
@@ -63,42 +65,6 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
     EnhancedInputComponent->BindAction(InputActions->InputDash, ETriggerEvent::Started, this, &APlayerCharacter::Dash);
 }
 
-void APlayerCharacter::ReceiveHoldable(IHoldable* Holdable)
-{
-    if (IsHolding())
-        return;
-
-    MyHoldable.SetInterface(Holdable);
-    MyHoldable.SetObject(Holdable->_getUObject());
-    MyHoldable->SetHolder(this);
-}
-
-bool APlayerCharacter::IsHolding() const
-{
-    if (MyHoldable != nullptr)
-        return true;
-
-    return false;
-}
-
-IHoldable* APlayerCharacter::GetHoldable() const
-{
-    return MyHoldable.GetInterface();
-}
-
-IHoldable* APlayerCharacter::RemoveHoldable()
-{
-    IHoldable* holdable = MyHoldable.GetInterface();
-    MyHoldable.SetInterface(nullptr);
-    MyHoldable.SetObject(nullptr);
-    return holdable;
-}
-
-USceneComponent* APlayerCharacter::GetHoldingSceneComponent()
-{
-    return HoldLocation;
-}
-
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
     if (Controller != nullptr)
@@ -125,31 +91,36 @@ void APlayerCharacter::PrimaryAction()
 
     for (AActor* OverlappingActor : OverlappingActors)
     {
-        IHolder* Holder = Cast<IHolder>(OverlappingActor);
-        if (Holder)
+        if (OverlappingActor == this)
+            continue;
+
+        TArray<UActorComponent*> Holders = OverlappingActor->GetComponentsByInterface(UHolder::StaticClass());
+
+        for (int i = 0; i < Holders.Num(); i++)
         {
-            if (Holder->_getUObject() == _getUObject())
-                continue;
-
-            if (IsHolding())
+            IHolder* Holder = Cast<IHolder>(Holders[i]);
+            if (Holder)
             {
-                if (!Holder->IsHolding())
+                if (HolderComponent->IsHolding())
                 {
-                    Holder->ReceiveHoldable(RemoveHoldable());
-                    return;
+                    if (!Holder->IsHolding())
+                    {
+                        Holder->ReceiveHoldable(HolderComponent->RemoveHoldable());
+                        return;
+                    }
                 }
-            }
 
-            if (Holder->IsHolding())
-            {
-                if (!IsHolding())
+                if (Holder->IsHolding())
                 {
-                    ReceiveHoldable(Holder->RemoveHoldable());
-                    return;
+                    if (!HolderComponent->IsHolding())
+                    {
+                        HolderComponent->ReceiveHoldable(Holder->RemoveHoldable());
+                        return;
+                    }
                 }
-            }
 
-            return;
+                return;
+            }
         }
     }
 }
@@ -161,11 +132,19 @@ void APlayerCharacter::SecondaryAction()
 
     for (AActor* OverlappingActor : OverlappingActors)
     {
-        IInteractable* Interactable = Cast<IInteractable>(OverlappingActor);
-        if (Interactable)
+        if (OverlappingActor == this)
+            continue;
+
+        TArray<UActorComponent*> Interactables = OverlappingActor->GetComponentsByInterface(UInteractable::StaticClass());
+
+        for (int i = 0; i < Interactables.Num(); i++)
         {
-            Interactable->Interact();
-            return;
+            IInteractable* Interactable = Cast<IInteractable>(Interactables[i]);
+            if (Interactable)
+            {
+                Interactable->Interact();
+                return;
+            }
         }
     }
 }
@@ -177,9 +156,9 @@ void APlayerCharacter::Dash()
 
 void APlayerCharacter::Throw()
 {
-    if (!IsHolding())
+    if (!HolderComponent->IsHolding())
         return;
 
-    RemoveHoldable()->Throw(GetActorForwardVector() + FVector(0.0f, 0.0f, 0.5f), 300.0f);
+    HolderComponent->RemoveHoldable()->Throw(GetActorForwardVector() + FVector(0.0f, 0.0f, 0.5f), 300.0f);
 }
 

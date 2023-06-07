@@ -28,3 +28,7 @@ USceneComponent* IHolder::GetHoldingSceneComponent()
 {
 	return nullptr;
 }
+
+void IHolder::SpawnItem(TSubclassOf<AItem> Item)
+{
+}

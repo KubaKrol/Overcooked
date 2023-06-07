@@ -12,7 +12,7 @@ class IInteractable;
 class AItem;
 
 UCLASS()
-class OVERCOOKED_API AHolderActor : public AActor, public IHolder
+class OVERCOOKED_API AHolderActor : public AActor
 {
 	GENERATED_BODY()
 	
@@ -26,15 +26,6 @@ private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* Mesh;
 
-	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
-	USceneComponent* HoldLocation;
-
-	UPROPERTY(VisibleAnywhere)
-	TScriptInterface<IHoldable> MyHoldable;
-
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<AItem> ItemToSpawn;
-
 #pragma endregion
 
 #pragma region Methods
@@ -45,15 +36,6 @@ public:
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	//IHolder interface
-	virtual void ReceiveHoldable(IHoldable* Holdable) override;
-	virtual bool IsHolding() const override;
-	virtual IHoldable* GetHoldable() const override;
-	virtual IHoldable* RemoveHoldable() override;
-	virtual USceneComponent* GetHoldingSceneComponent() override;
-
-	virtual void SpawnItem(TSubclassOf<AItem> Item);
 
 protected:
 	// Called when the game starts or when spawned

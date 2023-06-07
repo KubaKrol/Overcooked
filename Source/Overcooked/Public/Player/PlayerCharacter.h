@@ -16,9 +16,10 @@ class AHolderActor;
 class UBoxComponent;
 class IHoldable;
 class IInteractable;
+class UHolderComponent;
 
 UCLASS()
-class OVERCOOKED_API APlayerCharacter : public ACharacter, public IHolder
+class OVERCOOKED_API APlayerCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
@@ -39,11 +40,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")
 	UBoxComponent* BoxComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item Handling", meta = (AllowPrivateAccess = "true"))
-	USceneComponent* HoldLocation;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item Handling", meta = (AllowPrivateAccess = "true"))
-	TScriptInterface<IHoldable> MyHoldable;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
+	UHolderComponent* HolderComponent;
 
 private:
 
@@ -60,13 +58,6 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
-	//IHolder interface
-	virtual void ReceiveHoldable(IHoldable* Holdable) override;
-	virtual bool IsHolding() const override;
-	virtual IHoldable* GetHoldable() const override;
-	virtual IHoldable* RemoveHoldable() override;
-	virtual USceneComponent* GetHoldingSceneComponent() override;
 
 protected:
 	// Called when the game starts or when spawned

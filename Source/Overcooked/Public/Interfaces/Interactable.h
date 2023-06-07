@@ -16,6 +16,7 @@ class UInteractable : public UInterface
 /**
  * 
  */
+
 class OVERCOOKED_API IInteractable
 {
 	GENERATED_BODY()
