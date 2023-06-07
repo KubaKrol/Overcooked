@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Overcooked/Public/Interfaces/QuickTimeEvent.h"
 #include "QuickTimeEventComponent.generated.h"
 
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class OVERCOOKED_API UQuickTimeEventComponent : public UActorComponent
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+class OVERCOOKED_API UQuickTimeEventComponent : public UActorComponent, public IQuickTimeEvent
 {
 	GENERATED_BODY()
 
