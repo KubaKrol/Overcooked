@@ -6,6 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "OvercookedGameModeBase.generated.h"
 
+class APlayerCharacter;
+
 /**
  * 
  */
@@ -17,6 +19,8 @@ class OVERCOOKED_API AOvercookedGameModeBase : public AGameModeBase
 #pragma region Variables
 
 public:
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<APlayerCharacter> PlayerCharacterBlueprint;
 
 protected:
 
@@ -29,6 +33,8 @@ private:
 public:
 
 protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
 
 private:
 
