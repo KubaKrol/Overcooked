@@ -32,3 +32,7 @@ void UQuickTimeEventComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 	// ...
 }
 
+void UQuickTimeEventComponent::Initialize()
+{
+}
+

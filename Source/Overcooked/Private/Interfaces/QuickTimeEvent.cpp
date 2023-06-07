@@ -4,3 +4,7 @@
 #include "Interfaces/QuickTimeEvent.h"
 
 // Add default functionality here for any IQuickTimeEvent functions that are not pure virtual.
+
+void IQuickTimeEvent::Initialize()
+{
+}

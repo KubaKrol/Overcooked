@@ -20,6 +20,9 @@ class OVERCOOKED_API AOvercookedGameModeBase : public AGameModeBase
 
 public:
 	UPROPERTY(EditAnywhere)
+	int AmountOfPlayers = 1;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<APlayerCharacter> PlayerCharacterBlueprint;
 
 protected:
