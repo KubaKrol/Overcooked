@@ -4,6 +4,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Components/BoxComponent.h"
 #include "EnhancedInput/Public/EnhancedInputComponent.h"
+#include "EnhancedPlayerInput.h"
 #include "Overcooked/Public/Input/InputConfigData.h"
 #include "Overcooked/Public/Player/PlayerSettings.h"
 #include "Overcooked/Public/Actors/HolderActor.h"
@@ -41,6 +42,12 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+    APlayerController* PC = Cast<APlayerController>(GetController());
+    UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer());
+    UEnhancedPlayerInput* PlayerInput = Subsystem->GetPlayerInput();
+    FInputActionValue dashActionValue = PlayerInput->GetActionValue(InputActions->InputDash);
+    UE_LOG(LogTemp, Warning, TEXT("Dash action is %s"), *dashActionValue.ToString());
 }
 
 // Called to bind functionality to input

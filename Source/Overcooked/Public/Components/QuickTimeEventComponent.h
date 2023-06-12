@@ -17,8 +17,8 @@ class OVERCOOKED_API UQuickTimeEventComponent : public UActorComponent, public I
 #pragma region Variables
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UQuickTimeEventAction* MyAction;
+	UPROPERTY(EditAnywhere)
+	TArray<FQuickTimeEventActionData> ActionsDatas;
 
 protected:
 
