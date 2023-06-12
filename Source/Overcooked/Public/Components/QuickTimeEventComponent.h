@@ -8,8 +8,13 @@
 #include "Overcooked/Public/QuickTimeEvent/QuickTimeEventAction.h"
 #include "QuickTimeEventComponent.generated.h"
 
+class UEnhancedPlayerInput;
+class APlayerCharacter;
 
-UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInitialize);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActionFinished, int, ActionIndex);
+
+UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class OVERCOOKED_API UQuickTimeEventComponent : public UActorComponent, public IQuickTimeEvent
 {
 	GENERATED_BODY()
@@ -17,12 +22,24 @@ class OVERCOOKED_API UQuickTimeEventComponent : public UActorComponent, public I
 #pragma region Variables
 
 public:
-	UPROPERTY(EditAnywhere)
-	TArray<FQuickTimeEventActionData> ActionsDatas;
 
 protected:
+	UPROPERTY()
+	APlayerCharacter* MyPlayerCharacter;
 
 private:
+	UPROPERTY(BlueprintAssignable)
+	FOnInitialize OnInitialize;
+	UPROPERTY(BlueprintAssignable)
+	FOnActionFinished OnActionFinished;
+	UPROPERTY()
+	TArray<UQuickTimeEventAction*> Actions;
+	UPROPERTY()
+	int CurrentActionIndex = 0;
+	UPROPERTY()
+	bool Running;
+	UPROPERTY()
+	float Progress;
 
 #pragma endregion
 
@@ -35,7 +52,27 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	virtual void Initialize() override;
+	//IQuickTimeEvent Interface
+	virtual void Initialize(APlayerCharacter* playerCharacter) override;
+	UFUNCTION(BlueprintCallable)
+	virtual bool IsRunning() const override;
+	UFUNCTION(BlueprintCallable)
+	virtual float GetProgress() const override;
+	virtual void Finish() override;
+
+	UFUNCTION(BlueprintCallable)
+	virtual FString GetCurrentActionName() const;
+
+	virtual UEnhancedPlayerInput* ExtractPlayerInput(const APlayerCharacter* PlayerCharacter);
+
+	UFUNCTION(BlueprintCallable)
+	virtual UQuickTimeEventAction* AddPressAction(UInputAction* InputAction, FString Name);
+
+	UFUNCTION(BlueprintCallable)
+	virtual UQuickTimeEventAction* AddHoldAction(UInputAction* InputAction, float HoldTime, FString Name);
+
+	UFUNCTION(BlueprintCallable)
+	virtual void RandomizeActionsOrder();
 
 protected:
 	// Called when the game starts

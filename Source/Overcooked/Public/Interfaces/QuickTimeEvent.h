@@ -6,6 +6,8 @@
 #include "UObject/Interface.h"
 #include "QuickTimeEvent.generated.h"
 
+class APlayerCharacter;
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UQuickTimeEvent : public UInterface
@@ -22,5 +24,8 @@ class OVERCOOKED_API IQuickTimeEvent
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void Initialize();
+	virtual void Initialize(APlayerCharacter* playerCharacter);
+	virtual bool IsRunning() const;
+	virtual float GetProgress() const;
+	virtual void Finish();
 };

@@ -5,6 +5,20 @@
 
 // Add default functionality here for any IQuickTimeEvent functions that are not pure virtual.
 
-void IQuickTimeEvent::Initialize()
+void IQuickTimeEvent::Initialize(APlayerCharacter* playerCharacter)
+{
+}
+
+bool IQuickTimeEvent::IsRunning() const
+{
+	return false;
+}
+
+float IQuickTimeEvent::GetProgress() const
+{
+	return 0.0f;
+}
+
+void IQuickTimeEvent::Finish()
 {
 }

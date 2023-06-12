@@ -6,30 +6,11 @@
 #include "UObject/NoExportTypes.h"
 #include "QuickTimeEventAction.generated.h"
 
-class UInputAction;
-
-UENUM(BlueprintType)
-enum class EQuickTimeEventTriggerType : uint8 {
-	QTE_Press      UMETA(DisplayName = "Press"),
-	QTE_Hold       UMETA(DisplayName = "Hold")
-};
-
-USTRUCT(BlueprintType)
-struct FQuickTimeEventActionData
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere)
-	EQuickTimeEventTriggerType TriggerType;
-	UPROPERTY(EditAnywhere)
-	UInputAction* InputAction;
-};
-
 /**
  * 
  */
-UCLASS(BlueprintType)
+
+UCLASS(Blueprintable, BlueprintType)
 class OVERCOOKED_API UQuickTimeEventAction : public UObject
 {
 	GENERATED_BODY()
@@ -39,6 +20,11 @@ class OVERCOOKED_API UQuickTimeEventAction : public UObject
 public:
 
 protected:
+	UPROPERTY()
+	bool Finished;
+
+	UPROPERTY()
+	FString Name;
 
 private:
 
@@ -47,8 +33,12 @@ private:
 #pragma region Methods
 
 public:
+	virtual bool CheckInput();
+	virtual float GetProgress();
+	virtual FString GetName() const;
 
 protected:
+	virtual void Finish();
 
 private:
 

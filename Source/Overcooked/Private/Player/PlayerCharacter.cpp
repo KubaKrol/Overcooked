@@ -12,6 +12,7 @@
 #include "Overcooked/Public/Interfaces/Holdable.h"
 #include "Overcooked/Public/Interfaces/Interactable.h"
 #include "Overcooked/Public/Interfaces/Holder.h"
+#include "Overcooked/Public/Interfaces/QuickTimeEvent.h"
 #include "Overcooked/Public/Components/HolderComponent.h"
 #include "Overcooked/Public/Components/InteractableComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -42,12 +43,6 @@ void APlayerCharacter::BeginPlay()
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-    APlayerController* PC = Cast<APlayerController>(GetController());
-    UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer());
-    UEnhancedPlayerInput* PlayerInput = Subsystem->GetPlayerInput();
-    FInputActionValue dashActionValue = PlayerInput->GetActionValue(InputActions->InputDash);
-    UE_LOG(LogTemp, Warning, TEXT("Dash action is %s"), *dashActionValue.ToString());
 }
 
 // Called to bind functionality to input
@@ -143,6 +138,17 @@ void APlayerCharacter::SecondaryAction()
             continue;
 
         TArray<UActorComponent*> Interactables = OverlappingActor->GetComponentsByInterface(UInteractable::StaticClass());
+        TArray<UActorComponent*> QuickTimeEvents = OverlappingActor->GetComponentsByInterface(UQuickTimeEvent::StaticClass());
+
+        for (int i = 0; i < QuickTimeEvents.Num(); i++)
+        {
+            IQuickTimeEvent* QuickTimeEvent = Cast<IQuickTimeEvent>(QuickTimeEvents[i]);
+            if (QuickTimeEvent)
+            {
+                QuickTimeEvent->Initialize(this);
+                return;
+            }
+        }
 
         for (int i = 0; i < Interactables.Num(); i++)
         {
