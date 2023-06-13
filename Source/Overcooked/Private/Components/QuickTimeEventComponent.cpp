@@ -67,11 +67,29 @@ void UQuickTimeEventComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 void UQuickTimeEventComponent::Initialize(APlayerCharacter* playerCharacter)
 {
+	if (!CanInitialize())
+		return;
+
 	CurrentActionIndex = 0;
 	Actions.Empty();
 	MyPlayerCharacter = playerCharacter;
+	MyPlayerCharacter->SetQuickTimeEvent(this);
 	OnInitialize.Broadcast();
 	Running = true;
+}
+
+bool UQuickTimeEventComponent::CanInitialize()
+{
+	if(Finished)
+		return false;
+
+	if(Running)
+		return false;
+
+	if (MyPlayerCharacter != nullptr)
+		return false;
+
+	return true;
 }
 
 bool UQuickTimeEventComponent::IsRunning() const
@@ -87,6 +105,13 @@ float UQuickTimeEventComponent::GetProgress() const
 void UQuickTimeEventComponent::Finish()
 {
 	Running = false;
+	Finished = true;
+
+	if (MyPlayerCharacter != nullptr) 
+	{
+		MyPlayerCharacter->SetQuickTimeEvent(nullptr);
+		MyPlayerCharacter = nullptr;
+	}
 }
 
 FString UQuickTimeEventComponent::GetCurrentActionName() const

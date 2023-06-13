@@ -41,6 +41,9 @@ private:
 	UPROPERTY()
 	float Progress;
 
+	UPROPERTY()
+	bool Finished;
+
 #pragma endregion
 
 #pragma region Methods
@@ -54,6 +57,7 @@ public:
 
 	//IQuickTimeEvent Interface
 	virtual void Initialize(APlayerCharacter* playerCharacter) override;
+	virtual bool CanInitialize();
 	UFUNCTION(BlueprintCallable)
 	virtual bool IsRunning() const override;
 	UFUNCTION(BlueprintCallable)

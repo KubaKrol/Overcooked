@@ -17,6 +17,7 @@ class UBoxComponent;
 class IHoldable;
 class IInteractable;
 class UHolderComponent;
+class IQuickTimeEvent;
 
 UCLASS()
 class OVERCOOKED_API APlayerCharacter : public ACharacter
@@ -44,6 +45,8 @@ protected:
 	UHolderComponent* HolderComponent;
 
 private:
+	UPROPERTY(VisibleAnywhere)
+	TScriptInterface<IQuickTimeEvent> MyQuickTimeEvent;
 
 #pragma endregion
 
@@ -58,6 +61,8 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void SetQuickTimeEvent(IQuickTimeEvent* QuickTimeEvent);
 
 protected:
 	// Called when the game starts or when spawned

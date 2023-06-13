@@ -69,6 +69,9 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::Move(const FInputActionValue& Value)
 {
+    if (MyQuickTimeEvent != nullptr)
+        return;
+
     if (Controller != nullptr)
     {
         const FVector2D MoveValue = Value.Get<FVector2D>();
@@ -88,6 +91,9 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
 
 void APlayerCharacter::PrimaryAction()
 {
+    if (MyQuickTimeEvent != nullptr)
+        return;
+
     TArray<AActor*> OverlappingActors;
     BoxComponent->GetOverlappingActors(OverlappingActors);
 
@@ -129,6 +135,9 @@ void APlayerCharacter::PrimaryAction()
 
 void APlayerCharacter::SecondaryAction()
 {
+    if (MyQuickTimeEvent != nullptr)
+        return;
+
     TArray<AActor*> OverlappingActors;
     BoxComponent->GetOverlappingActors(OverlappingActors);
 
@@ -164,14 +173,34 @@ void APlayerCharacter::SecondaryAction()
 
 void APlayerCharacter::Dash()
 {
+    if (MyQuickTimeEvent != nullptr)
+        return;
+
     Cast<UCharacterMovementComponent>(GetComponentByClass(UCharacterMovementComponent::StaticClass()))->AddImpulse(GetActorForwardVector() * 400000.0f);
 }
 
 void APlayerCharacter::Throw()
 {
+    if (MyQuickTimeEvent != nullptr)
+        return;
+
     if (!HolderComponent->IsHolding())
         return;
 
     HolderComponent->RemoveHoldable()->Throw(GetActorForwardVector() + FVector(0.0f, 0.0f, 0.5f), 300.0f);
+}
+
+void APlayerCharacter::SetQuickTimeEvent(IQuickTimeEvent* QuickTimeEvent)
+{
+    if (QuickTimeEvent != nullptr)
+    {
+        MyQuickTimeEvent.SetInterface(QuickTimeEvent);
+        MyQuickTimeEvent.SetObject(QuickTimeEvent->_getUObject());
+    } 
+    else
+    {
+        MyQuickTimeEvent.SetInterface(nullptr);
+        MyQuickTimeEvent.SetObject(nullptr);
+    }
 }
 

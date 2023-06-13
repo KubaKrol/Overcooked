@@ -9,6 +9,11 @@ void IQuickTimeEvent::Initialize(APlayerCharacter* playerCharacter)
 {
 }
 
+bool IQuickTimeEvent::CanInitialize()
+{
+	return false;
+}
+
 bool IQuickTimeEvent::IsRunning() const
 {
 	return false;
