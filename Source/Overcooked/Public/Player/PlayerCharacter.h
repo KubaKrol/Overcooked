@@ -39,7 +39,10 @@ protected:
 	UPlayerSettings* PlayerSettings;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")
-	UBoxComponent* BoxComponent;
+	UBoxComponent* InteractionBoxComponent;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")
+	UBoxComponent* CatchingBoxComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
 	UHolderComponent* HolderComponent;

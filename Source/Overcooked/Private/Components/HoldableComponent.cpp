@@ -42,6 +42,7 @@ void UHoldableComponent::SetHolder(IHolder* Holder)
 		return;
 	}
 
+	CurrentState = EHoldableState::HELD;
 	MyHolder.SetInterface(Holder);
 	MyHolder.SetObject(Holder->_getUObject());
 	Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent())->SetSimulatePhysics(false);
@@ -56,9 +57,16 @@ IHolder* UHoldableComponent::GetHolder() const
 
 void UHoldableComponent::Throw(FVector direction, float Force)
 {
+	CurrentState = EHoldableState::THROWN;
 	SetHolder(nullptr);
 	GetOwner()->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent())->SetSimulatePhysics(true);
+	Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent())->SetAllPhysicsLinearVelocity(FVector::Zero());
 	Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent())->AddImpulse(direction * Force);
+}
+
+EHoldableState UHoldableComponent::GetCurrentState() const
+{
+	return CurrentState;
 }
 

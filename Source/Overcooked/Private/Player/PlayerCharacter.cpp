@@ -24,11 +24,17 @@ APlayerCharacter::APlayerCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-    BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
-    BoxComponent->SetupAttachment(RootComponent);
-    BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-    BoxComponent->SetCollisionObjectType(ECollisionChannel::ECC_Visibility);
-    BoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+    InteractionBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("InteractionBoxComponent"));
+    InteractionBoxComponent->SetupAttachment(RootComponent);
+    InteractionBoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    InteractionBoxComponent->SetCollisionObjectType(ECollisionChannel::ECC_Visibility);
+    InteractionBoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+
+    CatchingBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("CatchingBoxComponent"));
+    CatchingBoxComponent->SetupAttachment(RootComponent);
+    CatchingBoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    CatchingBoxComponent->SetCollisionObjectType(ECollisionChannel::ECC_Visibility);
+    CatchingBoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 
     HolderComponent = CreateDefaultSubobject<UHolderComponent>(TEXT("Holder"));
 }
@@ -95,7 +101,7 @@ void APlayerCharacter::PrimaryAction()
         return;
 
     TArray<AActor*> OverlappingActors;
-    BoxComponent->GetOverlappingActors(OverlappingActors);
+    InteractionBoxComponent->GetOverlappingActors(OverlappingActors);
 
     for (AActor* OverlappingActor : OverlappingActors)
     {
@@ -103,6 +109,7 @@ void APlayerCharacter::PrimaryAction()
             continue;
 
         TArray<UActorComponent*> Holders = OverlappingActor->GetComponentsByInterface(UHolder::StaticClass());
+        TArray<UActorComponent*> Holdables = OverlappingActor->GetComponentsByInterface(UHoldable::StaticClass());
 
         for (int i = 0; i < Holders.Num(); i++)
         {
@@ -126,8 +133,19 @@ void APlayerCharacter::PrimaryAction()
                         return;
                     }
                 }
+            }
+        }
 
-                return;
+        for (int i = 0; i < Holdables.Num(); i++)
+        {
+            IHoldable* Holdable = Cast<IHoldable>(Holdables[i]);
+            if (Holdable)
+            {
+                if (Holdable->GetCurrentState() == EHoldableState::THROWN)
+                {
+                    HolderComponent->ReceiveHoldable(Holdable);
+                    return;
+                }
             }
         }
     }
@@ -139,7 +157,7 @@ void APlayerCharacter::SecondaryAction()
         return;
 
     TArray<AActor*> OverlappingActors;
-    BoxComponent->GetOverlappingActors(OverlappingActors);
+    InteractionBoxComponent->GetOverlappingActors(OverlappingActors);
 
     for (AActor* OverlappingActor : OverlappingActors)
     {
@@ -187,6 +205,7 @@ void APlayerCharacter::Throw()
     if (!HolderComponent->IsHolding())
         return;
 
+    HolderComponent->SetCatchCooldown(1.0f);
     HolderComponent->RemoveHoldable()->Throw(GetActorForwardVector() + FVector(0.0f, 0.0f, 0.5f), 300.0f);
 }
 

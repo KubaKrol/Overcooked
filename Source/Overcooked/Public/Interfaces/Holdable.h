@@ -8,6 +8,13 @@
 
 class IHolder;
 
+UENUM(BlueprintType)
+enum class EHoldableState : uint8
+{
+	HELD	UMETA(DisplayName = "Held"),
+	THROWN  UMETA(DisplayName = "Thrown")
+};
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UHoldable : public UInterface
@@ -27,4 +34,5 @@ public:
 	virtual void SetHolder(IHolder* Holder);
 	virtual IHolder* GetHolder() const;
 	virtual void Throw(FVector direction, float Force);
+	virtual EHoldableState GetCurrentState() const;
 };

@@ -29,8 +29,17 @@ private:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AItem> ItemToSpawn;
 
-	UPROPERTY(VisibleAnywhere)
-	UHoldLocation* HoldLocation;
+	UPROPERTY(EditAnywhere)
+	FComponentReference HoldLocationReference;
+
+	UPROPERTY(EditAnywhere)
+	bool TryCatchHoldable;
+
+	UPROPERTY(EditAnywhere)
+	FComponentReference CatchingBoxComponentReference;;
+
+	UPROPERTY()
+	float CatchCooldown = 0.0f;
 
 #pragma endregion
 
@@ -43,12 +52,15 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	//IHolder Interface
 	virtual void ReceiveHoldable(IHoldable* Holdable) override;
 	virtual bool IsHolding() const override;
 	virtual IHoldable* GetHoldable() const override;
 	virtual IHoldable* RemoveHoldable() override;
 	virtual USceneComponent* GetHoldingSceneComponent() override;
 	virtual void SpawnItem(TSubclassOf<AItem> Item) override;
+	virtual void TryCatchItem(UPrimitiveComponent* catchingCollider) override;
+	virtual void SetCatchCooldown(float CooldownTime) override;
 
 protected:
 	// Called when the game starts

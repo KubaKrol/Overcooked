@@ -2,9 +2,11 @@
 
 
 #include "Components/HolderComponent.h"
+#include "Components/BoxComponent.h"
 #include "Overcooked/Public/Interfaces/Holdable.h"
 #include "Overcooked/Public/Actors/Item.h"
 #include "Overcooked/Public/Components/HoldLocation.h"
+#include "Overcooked/Public/Player/PlayerCharacter.h"
 #include "Engine/Engine.h"
 
 // Sets default values for this component's properties
@@ -21,7 +23,8 @@ void UHolderComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	//This is invoked just to print out error message if this component does not have HoldLocation specified.
+	GetHoldingSceneComponent();
 
 	if (ItemToSpawn)
 		SpawnItem(ItemToSpawn);
@@ -33,7 +36,10 @@ void UHolderComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	CatchCooldown -= GetWorld()->DeltaTimeSeconds;
+
+	if (TryCatchHoldable)
+		TryCatchItem(Cast<UBoxComponent>(CatchingBoxComponentReference.GetComponent(GetOwner())));
 }
 
 void UHolderComponent::ReceiveHoldable(IHoldable* Holdable)
@@ -69,13 +75,11 @@ IHoldable* UHolderComponent::RemoveHoldable()
 
 USceneComponent* UHolderComponent::GetHoldingSceneComponent()
 {
-	if (HoldLocation == nullptr)
-		HoldLocation = Cast<UHoldLocation>(GetOwner()->GetComponentByClass(UHoldLocation::StaticClass()));
+	UHoldLocation* HoldLocation = Cast<UHoldLocation>(HoldLocationReference.GetComponent(GetOwner()));
 
 	if (HoldLocation == nullptr)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Holder does not have HoldLocation component!"))
-		check(false);
 	}
 
 	return HoldLocation;
@@ -101,5 +105,43 @@ void UHolderComponent::SpawnItem(TSubclassOf<AItem> Item)
 			return;
 		}
 	}
+}
+
+void UHolderComponent::TryCatchItem(UPrimitiveComponent* CatchingCollider)
+{
+	if (CatchingCollider == nullptr)
+		return;
+
+	if (CatchCooldown > 0.0f)
+		return;
+
+	TArray<AActor*> OverlappingActors;
+	CatchingCollider->GetOverlappingActors(OverlappingActors);
+
+	for (AActor* OverlappingActor : OverlappingActors)
+	{
+		if (OverlappingActor == GetOwner())
+			continue;
+
+		TArray<UActorComponent*> Holdables = OverlappingActor->GetComponentsByInterface(UHoldable::StaticClass());
+
+		for (int i = 0; i < Holdables.Num(); i++)
+		{
+			IHoldable* Holdable = Cast<IHoldable>(Holdables[i]);
+			if (Holdable)
+			{
+				if (Holdable->GetCurrentState() == EHoldableState::THROWN)
+				{
+					ReceiveHoldable(Holdable);
+					return;
+				}
+			}
+		}
+	}
+}
+
+void UHolderComponent::SetCatchCooldown(float CooldownTime)
+{
+	CatchCooldown = CooldownTime;
 }
 

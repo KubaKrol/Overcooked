@@ -17,3 +17,8 @@ IHolder* IHoldable::GetHolder() const
 void IHoldable::Throw(FVector direction, float Force)
 {
 }
+
+EHoldableState IHoldable::GetCurrentState() const
+{
+	return EHoldableState::HELD;
+}

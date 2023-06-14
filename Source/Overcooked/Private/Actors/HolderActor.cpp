@@ -2,6 +2,7 @@
 
 
 #include "Actors/HolderActor.h"
+#include "Components/BoxComponent.h"
 #include "Actors/Item.h"
 
 // Sets default values
@@ -12,6 +13,12 @@ AHolderActor::AHolderActor()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	RootComponent = Mesh;
+
+	CatchingBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("CatchingBoxComponent"));
+	CatchingBoxComponent->SetupAttachment(RootComponent);
+	CatchingBoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	CatchingBoxComponent->SetCollisionObjectType(ECollisionChannel::ECC_Visibility);
+	CatchingBoxComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 }
 
 // Called when the game starts or when spawned

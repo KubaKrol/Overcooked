@@ -22,6 +22,9 @@ protected:
 
 private:
 	UPROPERTY(VisibleAnywhere)
+	EHoldableState CurrentState;
+
+	UPROPERTY(VisibleAnywhere)
 	TScriptInterface<IHolder> MyHolder;
 
 #pragma endregion
@@ -38,6 +41,7 @@ public:
 	virtual void SetHolder(IHolder* Holder) override;
 	virtual IHolder* GetHolder() const override;
 	virtual void Throw(FVector direction, float Force) override;
+	virtual EHoldableState GetCurrentState() const override;
 
 protected:
 	// Called when the game starts

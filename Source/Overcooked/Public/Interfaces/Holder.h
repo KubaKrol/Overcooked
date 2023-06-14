@@ -31,4 +31,6 @@ public:
 	virtual IHoldable* RemoveHoldable();
 	virtual USceneComponent* GetHoldingSceneComponent();
 	virtual void SpawnItem(TSubclassOf<AItem> Item);
+	virtual void TryCatchItem(UPrimitiveComponent* catchingCollider);
+	virtual void SetCatchCooldown(float CooldownTime);
 };

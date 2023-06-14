@@ -32,3 +32,11 @@ USceneComponent* IHolder::GetHoldingSceneComponent()
 void IHolder::SpawnItem(TSubclassOf<AItem> Item)
 {
 }
+
+void IHolder::TryCatchItem(UPrimitiveComponent* catchingCollider)
+{
+}
+
+void IHolder::SetCatchCooldown(float CooldownTime)
+{
+}

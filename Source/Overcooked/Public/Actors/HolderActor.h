@@ -10,6 +10,7 @@
 class IHoldable;
 class IInteractable;
 class AItem;
+class UBoxComponent;
 
 UCLASS()
 class OVERCOOKED_API AHolderActor : public AActor
@@ -21,6 +22,8 @@ class OVERCOOKED_API AHolderActor : public AActor
 public:
 
 protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")
+	UBoxComponent* CatchingBoxComponent;
 
 private:
 	UPROPERTY(VisibleAnywhere, meta = (AllowPrivateAccess = "true"))
