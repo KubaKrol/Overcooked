@@ -1,30 +1,32 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "QuickTimeEvent/QuickTimeEventHoldAction.h"
+#include "QuickTimeEvent/QuickTimeEventHoldActionV2D.h"
 #include "EnhancedPlayerInput.h"
 
-void UQuickTimeEventHoldAction::Init(UEnhancedPlayerInput* playerInput, UInputAction* inputAction, float holdTime, FString name)
+void UQuickTimeEventHoldActionV2D::Init(UEnhancedPlayerInput* playerInput, UInputAction* inputAction, FVector2D vector, float holdTime, FString name)
 {
 	PlayerInput = playerInput;
 	InputAction = inputAction;
+	Vector2D = vector;
 	Name = name;
 	HoldTime = holdTime;
 	HoldTimer = 0;
 }
 
-bool UQuickTimeEventHoldAction::CheckInput()
+bool UQuickTimeEventHoldActionV2D::CheckInput()
 {
 	if (Finished)
 		return true;
 
 	FInputActionValue InputActionValue = PlayerInput->GetActionValue(InputAction);
+	FVector2D Value = InputActionValue.Get<FVector2D>();
 
-	if (InputActionValue.Get<bool>() == true)
+	if(FVector2D::Distance(Value, Vector2D) < 0.35f)
 	{
 		HoldTimer += GetWorld()->DeltaTimeSeconds;
 
-		if (HoldTimer > HoldTime) 
+		if (HoldTimer > HoldTime)
 		{
 			if (!Finished)
 				Finish();
@@ -36,7 +38,7 @@ bool UQuickTimeEventHoldAction::CheckInput()
 	return false;
 }
 
-float UQuickTimeEventHoldAction::GetProgress()
+float UQuickTimeEventHoldActionV2D::GetProgress()
 {
 	return HoldTimer / HoldTime;
 }

@@ -81,10 +81,11 @@ void APlayerCharacter::Move(const FInputActionValue& Value)
     if (Controller != nullptr)
     {
         const FVector2D MoveValue = Value.Get<FVector2D>();
-        const FRotator MovementRotation(0, Controller->GetControlRotation().Yaw, 0);
 
-        if (MoveValue.Length() > 0.0f)
+        if (MoveValue.Length() > 0.25f)
         {
+            const FRotator MovementRotation(0, Controller->GetControlRotation().Yaw, 0);
+
             AddMovementInput(FVector(MoveValue.Y, MoveValue.X, 0.0f), MoveValue.Length());
             FQuat TargetRotation = FQuat::Slerp(
                 RootComponent->GetRelativeRotation().Quaternion(),

@@ -6,7 +6,12 @@
 #include "EnhancedInputSubsystems.h"
 #include "Overcooked/Public/QuickTimeEvent/QuickTimeEventAction.h"
 #include "Overcooked/Public/QuickTimeEvent/QuickTimeEventPressAction.h"
+#include "Overcooked/Public/QuickTimeEvent/QuickTimeEventPressActionV2D.h"
 #include "Overcooked/Public/QuickTimeEvent/QuickTimeEventHoldAction.h"
+#include "Overcooked/Public/QuickTimeEvent/QuickTimeEventHoldActionV2D.h"
+#include "Overcooked/Public/QuickTimeEvent/QuickTimeEventMashAction.h"
+#include "Overcooked/Public/QuickTimeEvent/QuickTimeEventMashActionV2D.h"
+#include "Overcooked/Public/QuickTimeEvent/QuickTimeEventWiggleAction.h"
 
 // Sets default values for this component's properties
 UQuickTimeEventComponent::UQuickTimeEventComponent()
@@ -137,12 +142,52 @@ UQuickTimeEventAction* UQuickTimeEventComponent::AddPressAction(UInputAction* In
 	return Cast<UQuickTimeEventAction>(PressAction);
 }
 
+UQuickTimeEventAction* UQuickTimeEventComponent::AddPressActionVector2D(UInputAction* InputAction, FVector2D Vector, FString Name)
+{
+	UQuickTimeEventPressActionV2D* PressActionVector2D = NewObject<UQuickTimeEventPressActionV2D>(this);
+	PressActionVector2D->Init(ExtractPlayerInput(MyPlayerCharacter), InputAction, Vector, Name);
+	Actions.Add(Cast<UQuickTimeEventAction>(PressActionVector2D));
+	return Cast<UQuickTimeEventAction>(PressActionVector2D);
+}
+
 UQuickTimeEventAction* UQuickTimeEventComponent::AddHoldAction(UInputAction* InputAction, float HoldTime, FString Name)
 {
 	UQuickTimeEventHoldAction* HoldAction = NewObject<UQuickTimeEventHoldAction>(this);
 	HoldAction->Init(ExtractPlayerInput(MyPlayerCharacter), InputAction, HoldTime, Name);
 	Actions.Add(Cast<UQuickTimeEventAction>(HoldAction));
 	return Cast<UQuickTimeEventAction>(HoldAction);
+}
+
+UQuickTimeEventAction* UQuickTimeEventComponent::AddHoldActionVector2D(UInputAction* InputAction, FVector2D Vector, float HoldTime, FString Name)
+{
+	UQuickTimeEventHoldActionV2D* HoldActionVector2D = NewObject<UQuickTimeEventHoldActionV2D>(this);
+	HoldActionVector2D->Init(ExtractPlayerInput(MyPlayerCharacter), InputAction, Vector, HoldTime, Name);
+	Actions.Add(Cast<UQuickTimeEventAction>(HoldActionVector2D));
+	return Cast<UQuickTimeEventAction>(HoldActionVector2D);
+}
+
+UQuickTimeEventAction* UQuickTimeEventComponent::AddMashAction(UInputAction* InputAction, int MashCount, FString Name)
+{
+	UQuickTimeEventMashAction* MashAction = NewObject<UQuickTimeEventMashAction>(this);
+	MashAction->Init(ExtractPlayerInput(MyPlayerCharacter), InputAction, MashCount, Name);
+	Actions.Add(Cast<UQuickTimeEventAction>(MashAction));
+	return Cast<UQuickTimeEventAction>(MashAction);
+}
+
+UQuickTimeEventAction* UQuickTimeEventComponent::AddMashActionVector2D(UInputAction* InputAction, FVector2D Vector, int MashCount, FString Name)
+{
+	UQuickTimeEventMashActionV2D* MashAction = NewObject<UQuickTimeEventMashActionV2D>(this);
+	MashAction->Init(ExtractPlayerInput(MyPlayerCharacter), InputAction, Vector, MashCount, Name);
+	Actions.Add(Cast<UQuickTimeEventAction>(MashAction));
+	return Cast<UQuickTimeEventAction>(MashAction);
+}
+
+UQuickTimeEventAction* UQuickTimeEventComponent::AddWiggleAction(UInputAction* InputAction, int WiggleCount, FString Name)
+{
+	UQuickTimeEventWiggleAction* WiggleAction = NewObject<UQuickTimeEventWiggleAction>(this);
+	WiggleAction->Init(ExtractPlayerInput(MyPlayerCharacter), InputAction, WiggleCount, Name);
+	Actions.Add(Cast<UQuickTimeEventAction>(WiggleAction));
+	return Cast<UQuickTimeEventAction>(WiggleAction);
 }
 
 void UQuickTimeEventComponent::RandomizeActionsOrder()

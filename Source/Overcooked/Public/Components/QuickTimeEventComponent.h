@@ -73,7 +73,22 @@ public:
 	virtual UQuickTimeEventAction* AddPressAction(UInputAction* InputAction, FString Name);
 
 	UFUNCTION(BlueprintCallable)
+	virtual UQuickTimeEventAction* AddPressActionVector2D(UInputAction* InputAction, FVector2D Vector, FString Name);
+
+	UFUNCTION(BlueprintCallable)
 	virtual UQuickTimeEventAction* AddHoldAction(UInputAction* InputAction, float HoldTime, FString Name);
+
+	UFUNCTION(BlueprintCallable)
+	virtual UQuickTimeEventAction* AddHoldActionVector2D(UInputAction* InputAction, FVector2D Vector, float HoldTime, FString Name);
+
+	UFUNCTION(BlueprintCallable)
+	virtual UQuickTimeEventAction* AddMashAction(UInputAction* InputAction, int MashCount, FString Name);
+
+	UFUNCTION(BlueprintCallable)
+	virtual UQuickTimeEventAction* AddMashActionVector2D(UInputAction* InputAction, FVector2D Vector, int MashCount, FString Name);
+
+	UFUNCTION(BlueprintCallable)
+	virtual UQuickTimeEventAction* AddWiggleAction(UInputAction* InputAction, int WiggleCount, FString Name);
 
 	UFUNCTION(BlueprintCallable)
 	virtual void RandomizeActionsOrder();
