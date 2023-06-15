@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Overcooked/Public/Interfaces/Holder.h"
+#include "Overcooked/Public/Global/Enums.h"
 #include "HolderComponent.generated.h"
 
 class IHoldable;
@@ -14,7 +15,7 @@ class UHoldableComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHoldableReceived, UHoldableComponent*, Holdable);
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class OVERCOOKED_API UHolderComponent : public UActorComponent, public IHolder
 {
 	GENERATED_BODY()
@@ -22,11 +23,15 @@ class OVERCOOKED_API UHolderComponent : public UActorComponent, public IHolder
 #pragma region Variables
 
 public:
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 	bool AcceptOnlySpecificHoldable;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
 	FString AcceptableHoldableName;
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditAnywhere)
+	bool CheckForClientTask;
+	UPROPERTY(EditAnywhere)
+	EClientTask ClientTask;
+	UPROPERTY(EditAnywhere)
 	bool HoldableCanByTaken = true;
 
 protected:

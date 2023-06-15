@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "Overcooked/Public/Global/Enums.h"
 #include "ClientData.generated.h"
 
 /**
@@ -20,4 +21,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FString ChairHoldableName = "Scrissors";
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TArray<EClientTask> ClientTaskSequence;
 };

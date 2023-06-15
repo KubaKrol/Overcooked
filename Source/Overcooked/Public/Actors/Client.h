@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "Overcooked/Public/Global/Enums.h"
 #include "Client.generated.h"
 
 class UHoldableComponent;
@@ -29,6 +30,9 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	UHoldableComponent* HoldableComponent;
 
+	UPROPERTY(VisibleAnywhere)
+	int CurrentTaskIndex = 0;
+
 #pragma endregion
 
 #pragma region Methods
@@ -43,7 +47,9 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual UClientData* GetClientData();
+	virtual UClientData* GetClientData() const;
+	virtual EClientTask GetCurrentClientTask() const;
+	virtual void IncrementClientTaskIndex();
 
 protected:
 	// Called when the game starts or when spawned

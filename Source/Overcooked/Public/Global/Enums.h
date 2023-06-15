@@ -22,3 +22,12 @@ enum class EDirection : uint8
 	DOWN        UMETA(DisplayName = "Down Direction"),
 	LEFT		UMETA(DisplayName = "Left Direction"),
 };
+
+UENUM(BlueprintType)
+enum class EClientTask : uint8
+{
+	NONE		UMETA(DisplayName = "Not specified"),
+	WASH		UMETA(DisplayName = "Wash"),
+	DRY			UMETA(DisplayName = "Dry"),
+	CUT			UMETA(DisplayName = "Cut"),
+};

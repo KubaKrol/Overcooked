@@ -2,6 +2,7 @@
 
 
 #include "Overcooked/Public/Components/HoldableComponent.h"
+#include "Overcooked/Public/Data/ClientData.h"
 #include "Actors/Client.h"
 
 // Sets default values
@@ -27,7 +28,6 @@ void AClient::BeginPlay()
 void AClient::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -36,8 +36,21 @@ void AClient::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
 
-UClientData* AClient::GetClientData()
+UClientData* AClient::GetClientData() const
 {
 	return ClientData;
+}
+
+EClientTask AClient::GetCurrentClientTask() const
+{
+	return GetClientData()->ClientTaskSequence[CurrentTaskIndex];
+}
+
+void AClient::IncrementClientTaskIndex()
+{
+	if (CurrentTaskIndex + 1 == GetClientData()->ClientTaskSequence.Num())
+		return;
+
+	CurrentTaskIndex++;
 }
 
