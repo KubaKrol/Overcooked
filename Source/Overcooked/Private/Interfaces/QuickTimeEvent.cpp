@@ -9,7 +9,7 @@ void IQuickTimeEvent::Initialize(APlayerCharacter* playerCharacter)
 {
 }
 
-bool IQuickTimeEvent::CanInitialize()
+bool IQuickTimeEvent::CanInitialize(APlayerCharacter* playerCharacter) const
 {
 	return false;
 }

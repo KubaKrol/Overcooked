@@ -5,11 +5,11 @@
 
 // Add default functionality here for any IInteractable functions that are not pure virtual.
 
-void IInteractable::Interact()
+void IInteractable::Interact(APlayerCharacter* PlayerCharacter)
 {
 }
 
-bool IInteractable::CanInteract() const
+bool IInteractable::CanInteract(APlayerCharacter* PlayerCharacter) const
 {
 	return false;
 }

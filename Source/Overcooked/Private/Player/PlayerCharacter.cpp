@@ -68,7 +68,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
     // Bind the actions
     EnhancedInputComponent->BindAction(InputActions->InputMovement, ETriggerEvent::Triggered, this, &APlayerCharacter::Move);
     EnhancedInputComponent->BindAction(InputActions->InputPrimaryAction, ETriggerEvent::Started, this, &APlayerCharacter::PrimaryAction);
-    EnhancedInputComponent->BindAction(InputActions->InputSecondaryAction, ETriggerEvent::Triggered, this, &APlayerCharacter::SecondaryAction);
+    EnhancedInputComponent->BindAction(InputActions->InputSecondaryAction, ETriggerEvent::Started, this, &APlayerCharacter::SecondaryAction);
     EnhancedInputComponent->BindAction(InputActions->InputThrow, ETriggerEvent::Started, this, &APlayerCharacter::Throw);
     EnhancedInputComponent->BindAction(InputActions->InputDash, ETriggerEvent::Started, this, &APlayerCharacter::Dash);
 }
@@ -121,17 +121,23 @@ void APlayerCharacter::PrimaryAction()
                 {
                     if (!Holder->IsHolding())
                     {
-                        Holder->ReceiveHoldable(HolderComponent->RemoveHoldable());
-                        return;
+                        if (Holder->CanReceiveHoldable(HolderComponent->GetHoldable())) 
+                        {
+                            Holder->ReceiveHoldable(HolderComponent->RemoveHoldable());
+                            return;
+                        }
                     }
                 }
 
                 if (Holder->IsHolding())
                 {
-                    if (!HolderComponent->IsHolding())
+                    if (Holder->CanHoldableBeTaken())
                     {
-                        HolderComponent->ReceiveHoldable(Holder->RemoveHoldable());
-                        return;
+                        if (!HolderComponent->IsHolding())
+                        {
+                            HolderComponent->ReceiveHoldable(Holder->RemoveHoldable());
+                            return;
+                        }
                     }
                 }
             }
@@ -142,7 +148,8 @@ void APlayerCharacter::PrimaryAction()
             IHoldable* Holdable = Cast<IHoldable>(Holdables[i]);
             if (Holdable)
             {
-                if (Holdable->GetCurrentState() == EHoldableState::THROWN)
+                if (Holdable->GetCurrentState() == EHoldableState::THROWN ||
+                    Holdable->GetCurrentState() == EHoldableState::NONE)
                 {
                     HolderComponent->ReceiveHoldable(Holdable);
                     return;
@@ -183,7 +190,7 @@ void APlayerCharacter::SecondaryAction()
             IInteractable* Interactable = Cast<IInteractable>(Interactables[i]);
             if (Interactable)
             {
-                Interactable->Interact();
+                Interactable->Interact(this);
                 return;
             }
         }
@@ -207,7 +214,7 @@ void APlayerCharacter::Throw()
         return;
 
     HolderComponent->SetCatchCooldown(1.0f);
-    HolderComponent->RemoveHoldable()->Throw(GetActorForwardVector() + FVector(0.0f, 0.0f, 0.5f), 300.0f);
+    HolderComponent->RemoveHoldable()->Throw(GetActorForwardVector() + FVector(0.0f, 0.0f, 0.5f));
 }
 
 void APlayerCharacter::SetQuickTimeEvent(IQuickTimeEvent* QuickTimeEvent)
@@ -222,5 +229,10 @@ void APlayerCharacter::SetQuickTimeEvent(IQuickTimeEvent* QuickTimeEvent)
         MyQuickTimeEvent.SetInterface(nullptr);
         MyQuickTimeEvent.SetObject(nullptr);
     }
+}
+
+UHolderComponent* APlayerCharacter::GetHolderComponent() const
+{
+    return HolderComponent;
 }
 

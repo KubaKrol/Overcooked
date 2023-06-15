@@ -33,6 +33,11 @@ void UHoldableComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	// ...
 }
 
+FString UHoldableComponent::GetHoldableName() const
+{
+	return HoldableName;
+}
+
 void UHoldableComponent::SetHolder(IHolder* Holder)
 {
 	if (Holder == nullptr)
@@ -55,14 +60,14 @@ IHolder* UHoldableComponent::GetHolder() const
 	return MyHolder.GetInterface();
 }
 
-void UHoldableComponent::Throw(FVector direction, float Force)
+void UHoldableComponent::Throw(FVector direction)
 {
 	CurrentState = EHoldableState::THROWN;
 	SetHolder(nullptr);
 	GetOwner()->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent())->SetSimulatePhysics(true);
 	Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent())->SetAllPhysicsLinearVelocity(FVector::Zero());
-	Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent())->AddImpulse(direction * Force);
+	Cast<UPrimitiveComponent>(GetOwner()->GetRootComponent())->AddImpulse(direction * ThrowForce);
 }
 
 EHoldableState UHoldableComponent::GetCurrentState() const

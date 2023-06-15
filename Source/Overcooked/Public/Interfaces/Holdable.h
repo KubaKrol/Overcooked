@@ -11,6 +11,7 @@ class IHolder;
 UENUM(BlueprintType)
 enum class EHoldableState : uint8
 {
+	NONE	UMETA(DisplayName = "None"),
 	HELD	UMETA(DisplayName = "Held"),
 	THROWN  UMETA(DisplayName = "Thrown")
 };
@@ -31,8 +32,9 @@ class OVERCOOKED_API IHoldable
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	virtual FString GetHoldableName() const;
 	virtual void SetHolder(IHolder* Holder);
 	virtual IHolder* GetHolder() const;
-	virtual void Throw(FVector direction, float Force);
+	virtual void Throw(FVector direction);
 	virtual EHoldableState GetCurrentState() const;
 };

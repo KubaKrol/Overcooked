@@ -10,6 +10,9 @@
 class IHoldable;
 class AItem;
 class UHoldLocation;
+class UHoldableComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHoldableReceived, UHoldableComponent*, Holdable);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class OVERCOOKED_API UHolderComponent : public UActorComponent, public IHolder
@@ -19,10 +22,19 @@ class OVERCOOKED_API UHolderComponent : public UActorComponent, public IHolder
 #pragma region Variables
 
 public:
+	UPROPERTY(EditDefaultsOnly)
+	bool AcceptOnlySpecificHoldable;
+	UPROPERTY(EditDefaultsOnly)
+	FString AcceptableHoldableName;
+	UPROPERTY(EditDefaultsOnly)
+	bool HoldableCanByTaken = true;
 
 protected:
 
 private:
+	UPROPERTY(BlueprintAssignable)
+	FOnHoldableReceived OnHoldableReceivedDelegate;
+
 	UPROPERTY(VisibleAnywhere)
 	TScriptInterface<IHoldable> MyHoldable;
 
@@ -53,8 +65,11 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	//IHolder Interface
+	virtual bool CanReceiveHoldable(IHoldable* Holdable) const override;
 	virtual void ReceiveHoldable(IHoldable* Holdable) override;
+	virtual void OnHoldableReceived() override;
 	virtual bool IsHolding() const override;
+	virtual bool CanHoldableBeTaken() const override;
 	virtual IHoldable* GetHoldable() const override;
 	virtual IHoldable* RemoveHoldable() override;
 	virtual USceneComponent* GetHoldingSceneComponent() override;

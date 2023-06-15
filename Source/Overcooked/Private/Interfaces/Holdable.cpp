@@ -5,6 +5,11 @@
 
 // Add default functionality here for any IHoldable functions that are not pure virtual.
 
+FString IHoldable::GetHoldableName() const
+{
+	return FString();
+}
+
 void IHoldable::SetHolder(IHolder* Holder)
 {
 }
@@ -14,7 +19,7 @@ IHolder* IHoldable::GetHolder() const
 	return nullptr;
 }
 
-void IHoldable::Throw(FVector direction, float Force)
+void IHoldable::Throw(FVector direction)
 {
 }
 

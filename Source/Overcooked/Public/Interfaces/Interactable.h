@@ -6,6 +6,8 @@
 #include "UObject/Interface.h"
 #include "Interactable.generated.h"
 
+class APlayerCharacter;
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UInteractable : public UInterface
@@ -23,8 +25,8 @@ class OVERCOOKED_API IInteractable
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void Interact();
-	virtual bool CanInteract() const;
+	virtual void Interact(APlayerCharacter* PlayerCharacter);
+	virtual bool CanInteract(APlayerCharacter* PlayerCharacter) const;
 	virtual float GetInteractionSpeed() const;
 	virtual float GetInteractionProgress() const;
 	virtual void InteractionFinished();

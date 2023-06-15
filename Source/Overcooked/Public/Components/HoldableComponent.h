@@ -17,6 +17,11 @@ class OVERCOOKED_API UHoldableComponent : public UActorComponent, public IHoldab
 #pragma region Variables
 
 public:
+	UPROPERTY(EditAnywhere)
+	FString HoldableName;
+
+	UPROPERTY(EditAnywhere)
+	float ThrowForce;
 
 protected:
 
@@ -38,9 +43,11 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+	//IHoldable Interface
+	virtual FString GetHoldableName() const override;
 	virtual void SetHolder(IHolder* Holder) override;
 	virtual IHolder* GetHolder() const override;
-	virtual void Throw(FVector direction, float Force) override;
+	virtual void Throw(FVector direction) override;
 	virtual EHoldableState GetCurrentState() const override;
 
 protected:

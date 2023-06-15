@@ -7,6 +7,8 @@
 #include "Overcooked/Public/Interfaces/Interactable.h"
 #include "InteractableComponent.generated.h"
 
+class APlayerCharacter;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInteractionFinished);
 
 UCLASS(Blueprintable, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -22,8 +24,20 @@ protected:
 
 private:
 	UPROPERTY(EditDefaultsOnly)
+	bool Toggle;
+	UPROPERTY(EditDefaultsOnly)
 	float InteractionSpeed = 0.5f;
+	UPROPERTY(EditDefaultsOnly)
+	bool PlayerMushHaveHoldable;
+	UPROPERTY(EditDefaultsOnly)
+	FString PlayerHoldableName;
+	UPROPERTY(EditDefaultsOnly)
+	bool MustHaveHoldable;
+	UPROPERTY(EditDefaultsOnly)
+	FString HoldableName;
 
+	UPROPERTY(VisibleAnywhere)
+	bool Toggled;
 	UPROPERTY(VisibleAnywhere)
 	float InteractionProgress;
 
@@ -41,8 +55,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	virtual void Interact() override;
-	virtual bool CanInteract() const override;
+	virtual void Interact(APlayerCharacter* PlayerCharacter) override;
+	virtual bool CanInteract(APlayerCharacter* PlayerCharacter) const override;
 	virtual float GetInteractionSpeed() const override;
 	UFUNCTION(BlueprintCallable)
 	virtual float GetInteractionProgress() const override;

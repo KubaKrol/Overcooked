@@ -12,6 +12,7 @@ class UEnhancedPlayerInput;
 class APlayerCharacter;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInitialize);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInitializeWithHoldable, FString, HoldableName);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActionFinished, int, ActionIndex);
 
 UCLASS(Blueprintable, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -22,6 +23,14 @@ class OVERCOOKED_API UQuickTimeEventComponent : public UActorComponent, public I
 #pragma region Variables
 
 public:
+	UPROPERTY(EditDefaultsOnly)
+	bool PlayerMustHaveHoldable;
+	UPROPERTY(EditAnywhere)
+	FString PlayerHoldableName;
+	UPROPERTY(EditDefaultsOnly)
+	bool MustHaveHoldable;
+	UPROPERTY(EditDefaultsOnly)
+	FString HoldableName;
 
 protected:
 	UPROPERTY()
@@ -31,6 +40,8 @@ private:
 	UPROPERTY(BlueprintAssignable)
 	FOnInitialize OnInitialize;
 	UPROPERTY(BlueprintAssignable)
+	FOnInitializeWithHoldable OnInitializeWithHoldable;
+	UPROPERTY(BlueprintAssignable)
 	FOnActionFinished OnActionFinished;
 	UPROPERTY()
 	TArray<UQuickTimeEventAction*> Actions;
@@ -39,10 +50,14 @@ private:
 	UPROPERTY()
 	bool Running;
 	UPROPERTY()
+	float Timer;
+	UPROPERTY()
 	float Progress;
 
 	UPROPERTY()
 	bool Finished;
+
+	const float TIMER_MULTIPLIER = 0.025f;
 
 #pragma endregion
 
@@ -57,7 +72,7 @@ public:
 
 	//IQuickTimeEvent Interface
 	virtual void Initialize(APlayerCharacter* playerCharacter) override;
-	virtual bool CanInitialize();
+	virtual bool CanInitialize(APlayerCharacter* playerCharacter) const override;
 	UFUNCTION(BlueprintCallable)
 	virtual bool IsRunning() const override;
 	UFUNCTION(BlueprintCallable)
@@ -66,6 +81,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual FString GetCurrentActionName() const;
+
+	UFUNCTION(BlueprintCallable)
+	virtual void SetPlayerHoldableName(FString NewPlayerHoldableName);
 
 	virtual UEnhancedPlayerInput* ExtractPlayerInput(const APlayerCharacter* PlayerCharacter);
 
@@ -89,6 +107,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	virtual UQuickTimeEventAction* AddWiggleAction(UInputAction* InputAction, int WiggleCount, FString Name);
+
+	UFUNCTION(BlueprintCallable)
+	virtual UQuickTimeEventAction* AddMashPairAction(UInputAction* FirstInputAction, UInputAction* SecondInputAction, int MashCount, FString Name);
 
 	UFUNCTION(BlueprintCallable)
 	virtual void RandomizeActionsOrder();

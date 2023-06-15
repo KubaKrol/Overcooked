@@ -25,7 +25,7 @@ class OVERCOOKED_API IQuickTimeEvent
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	virtual void Initialize(APlayerCharacter* playerCharacter);
-	virtual bool CanInitialize();
+	virtual bool CanInitialize(APlayerCharacter* playerCharacter) const;
 	virtual bool IsRunning() const;
 	virtual float GetProgress() const;
 	virtual void Finish();

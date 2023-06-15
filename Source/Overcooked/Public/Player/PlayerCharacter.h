@@ -44,7 +44,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Collision")
 	UBoxComponent* CatchingBoxComponent;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enhanced Input")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
 	UHolderComponent* HolderComponent;
 
 private:
@@ -66,6 +66,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	void SetQuickTimeEvent(IQuickTimeEvent* QuickTimeEvent);
+
+	UHolderComponent* GetHolderComponent() const;
 
 protected:
 	// Called when the game starts or when spawned

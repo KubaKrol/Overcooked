@@ -25,8 +25,11 @@ class OVERCOOKED_API IHolder
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	virtual bool CanReceiveHoldable(IHoldable* Holdable) const;
 	virtual void ReceiveHoldable(IHoldable* Holdable);
+	virtual void OnHoldableReceived();
 	virtual bool IsHolding() const;
+	virtual bool CanHoldableBeTaken() const;
 	virtual IHoldable* GetHoldable() const;
 	virtual IHoldable* RemoveHoldable();
 	virtual USceneComponent* GetHoldingSceneComponent();

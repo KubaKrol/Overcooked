@@ -4,6 +4,7 @@
 #include "Components/HolderComponent.h"
 #include "Components/BoxComponent.h"
 #include "Overcooked/Public/Interfaces/Holdable.h"
+#include "Overcooked/Public/Components/HoldableComponent.h"
 #include "Overcooked/Public/Actors/Item.h"
 #include "Overcooked/Public/Components/HoldLocation.h"
 #include "Overcooked/Public/Player/PlayerCharacter.h"
@@ -42,14 +43,34 @@ void UHolderComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 		TryCatchItem(Cast<UBoxComponent>(CatchingBoxComponentReference.GetComponent(GetOwner())));
 }
 
-void UHolderComponent::ReceiveHoldable(IHoldable* Holdable)
+bool UHolderComponent::CanReceiveHoldable(IHoldable* Holdable) const
 {
 	if (IsHolding())
+		return false;
+
+	if (AcceptOnlySpecificHoldable)
+	{
+		if (Holdable->GetHoldableName() != AcceptableHoldableName)
+			return false;
+	}
+
+	return true;
+}
+
+void UHolderComponent::ReceiveHoldable(IHoldable* Holdable)
+{
+	if (!CanReceiveHoldable(Holdable))
 		return;
 
 	MyHoldable.SetInterface(Holdable);
 	MyHoldable.SetObject(Holdable->_getUObject());
 	MyHoldable->SetHolder(this);
+	OnHoldableReceived();
+}
+
+void UHolderComponent::OnHoldableReceived()
+{
+	OnHoldableReceivedDelegate.Broadcast(Cast<UHoldableComponent>(MyHoldable.GetInterface()));
 }
 
 bool UHolderComponent::IsHolding() const
@@ -58,6 +79,11 @@ bool UHolderComponent::IsHolding() const
 		return true;
 
 	return false;
+}
+
+bool UHolderComponent::CanHoldableBeTaken() const
+{
+	return HoldableCanByTaken;
 }
 
 IHoldable* UHolderComponent::GetHoldable() const

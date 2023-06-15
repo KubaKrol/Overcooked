@@ -4,6 +4,8 @@
 #include "Components/QuickTimeEventComponent.h"
 #include "Overcooked/Public/Player/PlayerCharacter.h"
 #include "EnhancedInputSubsystems.h"
+#include "Overcooked/Public/Components/HolderComponent.h"
+#include "Overcooked/Public/Interfaces/Holdable.h"
 #include "Overcooked/Public/QuickTimeEvent/QuickTimeEventAction.h"
 #include "Overcooked/Public/QuickTimeEvent/QuickTimeEventPressAction.h"
 #include "Overcooked/Public/QuickTimeEvent/QuickTimeEventPressActionV2D.h"
@@ -12,6 +14,7 @@
 #include "Overcooked/Public/QuickTimeEvent/QuickTimeEventMashAction.h"
 #include "Overcooked/Public/QuickTimeEvent/QuickTimeEventMashActionV2D.h"
 #include "Overcooked/Public/QuickTimeEvent/QuickTimeEventWiggleAction.h"
+#include "Overcooked/Public/QuickTimeEvent/QuickTimeEventMashPairAction.h"
 
 // Sets default values for this component's properties
 UQuickTimeEventComponent::UQuickTimeEventComponent()
@@ -41,7 +44,7 @@ void UQuickTimeEventComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 
 	// ...
 
-	if (CurrentActionIndex < Actions.Num())
+	if (CurrentActionIndex < Actions.Num() && Running)
 	{
 		if (MyPlayerCharacter != nullptr && Actions.Num() > 0)
 		{
@@ -58,6 +61,12 @@ void UQuickTimeEventComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 		}
 	}
 
+	if (GetProgress() >= 1.0f)
+	{
+		Finish();
+		return;
+	}
+
 	if (Running)
 	{
 		float maxProgress = (float)Actions.Num();
@@ -66,13 +75,15 @@ void UQuickTimeEventComponent::TickComponent(float DeltaTime, ELevelTick TickTyp
 		{
 			progressSum += Actions[i]->GetProgress();
 		}
-		Progress = progressSum / maxProgress;
+
+		Timer += GetWorld()->DeltaTimeSeconds * TIMER_MULTIPLIER;
+		Progress = Timer + (progressSum / maxProgress);
 	}
 }
 
 void UQuickTimeEventComponent::Initialize(APlayerCharacter* playerCharacter)
 {
-	if (!CanInitialize())
+	if (!CanInitialize(playerCharacter))
 		return;
 
 	CurrentActionIndex = 0;
@@ -80,19 +91,52 @@ void UQuickTimeEventComponent::Initialize(APlayerCharacter* playerCharacter)
 	MyPlayerCharacter = playerCharacter;
 	MyPlayerCharacter->SetQuickTimeEvent(this);
 	OnInitialize.Broadcast();
+	Progress = 0.0f;
+	Timer = 0.0f;
 	Running = true;
+
+	if (PlayerMustHaveHoldable) 
+	{
+		OnInitializeWithHoldable.Broadcast(playerCharacter->GetHolderComponent()->GetHoldable()->GetHoldableName());
+	}
 }
 
-bool UQuickTimeEventComponent::CanInitialize()
+bool UQuickTimeEventComponent::CanInitialize(APlayerCharacter* playerCharacter) const
 {
-	if(Finished)
-		return false;
+	//if(Finished)
+		//return false;
 
 	if(Running)
 		return false;
 
 	if (MyPlayerCharacter != nullptr)
 		return false;
+
+	if (PlayerMustHaveHoldable)
+	{
+		if (!playerCharacter->GetHolderComponent()->IsHolding())
+			return false;
+
+		if (playerCharacter->GetHolderComponent()->GetHoldable()->GetHoldableName() != PlayerHoldableName)
+			return false;
+	}
+
+	if (MustHaveHoldable)
+	{
+		UHolderComponent* MyHolderComponent = Cast<UHolderComponent>(GetOwner()->GetComponentByClass(UHolderComponent::StaticClass()));
+
+		if (!MyHolderComponent)
+		{
+			UE_LOG(LogTemp, Error, TEXT("QTE component must hold holdable to initialize but does not have Holder Component! Fix it!"));
+			return false;
+		}
+
+		if (!MyHolderComponent->IsHolding())
+			return false;
+
+		if (MyHolderComponent->GetHoldable()->GetHoldableName() != HoldableName)
+			return false;
+	}
 
 	return true;
 }
@@ -121,10 +165,18 @@ void UQuickTimeEventComponent::Finish()
 
 FString UQuickTimeEventComponent::GetCurrentActionName() const
 {
+	if (Actions.Num() == 0)
+		return "";
+
 	if (Actions[CurrentActionIndex] == nullptr)
 		return "";
 
 	return Actions[CurrentActionIndex]->GetName();
+}
+
+void UQuickTimeEventComponent::SetPlayerHoldableName(FString NewPlayerHoldableName)
+{
+	PlayerHoldableName = NewPlayerHoldableName;
 }
 
 UEnhancedPlayerInput* UQuickTimeEventComponent::ExtractPlayerInput(const APlayerCharacter* PlayerCharacter)
@@ -188,6 +240,14 @@ UQuickTimeEventAction* UQuickTimeEventComponent::AddWiggleAction(UInputAction* I
 	WiggleAction->Init(ExtractPlayerInput(MyPlayerCharacter), InputAction, WiggleCount, Name);
 	Actions.Add(Cast<UQuickTimeEventAction>(WiggleAction));
 	return Cast<UQuickTimeEventAction>(WiggleAction);
+}
+
+UQuickTimeEventAction* UQuickTimeEventComponent::AddMashPairAction(UInputAction* FirstInputAction, UInputAction* SecondInputAction, int MashCount, FString Name)
+{
+	UQuickTimeEventMashPairAction* MashPairAction = NewObject<UQuickTimeEventMashPairAction>(this);
+	MashPairAction->Init(ExtractPlayerInput(MyPlayerCharacter), FirstInputAction, SecondInputAction, MashCount, Name);
+	Actions.Add(Cast<UQuickTimeEventAction>(MashPairAction));
+	return Cast<UQuickTimeEventAction>(MashPairAction);
 }
 
 void UQuickTimeEventComponent::RandomizeActionsOrder()
