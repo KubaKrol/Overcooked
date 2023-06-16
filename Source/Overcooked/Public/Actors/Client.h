@@ -49,6 +49,7 @@ public:
 
 	virtual UClientData* GetClientData() const;
 	virtual EClientTask GetCurrentClientTask() const;
+	UFUNCTION(BlueprintCallable)
 	virtual void IncrementClientTaskIndex();
 
 protected:

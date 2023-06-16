@@ -4,12 +4,26 @@
 #include "OvercookedGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Overcooked/Public/Player/PlayerCharacter.h"
+#include "Overcooked/Public/Managers/ClientManager.h"
 #include "GameFramework/PlayerStart.h"
+
+UClientManager* AOvercookedGameModeBase::GetClientManager()
+{
+	if(ClientManager == nullptr)
+		ClientManager = NewObject<UClientManager>(this, "ClientManager");
+
+	return ClientManager;
+}
 
 void AOvercookedGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	SpawnPlayers();
+}
+
+void AOvercookedGameModeBase::SpawnPlayers()
+{
 	TArray<AActor*> PlayerStarts;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
 
@@ -28,7 +42,7 @@ void AOvercookedGameModeBase::BeginPlay()
 			APlayerController* PC = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 			PC->Possess(Cast<APlayerCharacter>(PlayerActor));
 		}
-		else 
+		else
 		{
 			//Creating the rest of player controllers
 			APlayerController* PC = UGameplayStatics::CreatePlayer(GetWorld(), i);

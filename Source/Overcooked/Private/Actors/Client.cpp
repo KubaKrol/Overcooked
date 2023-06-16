@@ -52,5 +52,7 @@ void AClient::IncrementClientTaskIndex()
 		return;
 
 	CurrentTaskIndex++;
+
+	UE_LOG(LogTemp, Warning, TEXT("The integer value is: %d"), CurrentTaskIndex);
 }
 

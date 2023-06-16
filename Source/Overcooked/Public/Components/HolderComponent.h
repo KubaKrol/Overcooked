@@ -73,9 +73,12 @@ public:
 	virtual bool CanReceiveHoldable(IHoldable* Holdable) const override;
 	virtual void ReceiveHoldable(IHoldable* Holdable) override;
 	virtual void OnHoldableReceived() override;
+	UFUNCTION(BlueprintCallable)
 	virtual bool IsHolding() const override;
 	virtual bool CanHoldableBeTaken() const override;
 	virtual IHoldable* GetHoldable() const override;
+	UFUNCTION(BlueprintCallable)
+	virtual UHoldableComponent* GetHoldableComponent() const;
 	virtual IHoldable* RemoveHoldable() override;
 	virtual USceneComponent* GetHoldingSceneComponent() override;
 	virtual void SpawnItem(TSubclassOf<AItem> Item) override;

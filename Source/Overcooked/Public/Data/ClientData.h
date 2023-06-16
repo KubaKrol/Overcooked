@@ -17,6 +17,9 @@ class OVERCOOKED_API UClientData : public UPrimaryDataAsset
 	
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float PatienceTime = 60.0f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FString WasherHoldableName = "Shampoo";
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

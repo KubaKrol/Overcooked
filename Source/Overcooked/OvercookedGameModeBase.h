@@ -7,6 +7,7 @@
 #include "OvercookedGameModeBase.generated.h"
 
 class APlayerCharacter;
+class UClientManager;
 
 /**
  * 
@@ -26,6 +27,8 @@ public:
 	TSubclassOf<APlayerCharacter> PlayerCharacterBlueprint;
 
 protected:
+	UPROPERTY(VisibleAnywhere)
+	UClientManager* ClientManager;
 
 private:
 
@@ -34,12 +37,15 @@ private:
 #pragma region Methods
 
 public:
+	UFUNCTION(BlueprintCallable)
+	UClientManager* GetClientManager();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 private:
+	virtual void SpawnPlayers();
 
 #pragma endregion
 };

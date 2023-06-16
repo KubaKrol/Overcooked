@@ -153,13 +153,19 @@ float UQuickTimeEventComponent::GetProgress() const
 
 void UQuickTimeEventComponent::Finish()
 {
-	Running = false;
-	Finished = true;
-
-	if (MyPlayerCharacter != nullptr) 
+	if (Running)
 	{
-		MyPlayerCharacter->SetQuickTimeEvent(nullptr);
-		MyPlayerCharacter = nullptr;
+		Progress = 0.0f;
+		Running = false;
+		Finished = true;
+
+		OnFinished.Broadcast();
+
+		if (MyPlayerCharacter != nullptr)
+		{
+			MyPlayerCharacter->SetQuickTimeEvent(nullptr);
+			MyPlayerCharacter = nullptr;
+		}
 	}
 }
 

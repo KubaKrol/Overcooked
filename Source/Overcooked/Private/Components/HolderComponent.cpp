@@ -8,6 +8,7 @@
 #include "Overcooked/Public/Actors/Item.h"
 #include "Overcooked/Public/Components/HoldLocation.h"
 #include "Overcooked/Public/Player/PlayerCharacter.h"
+#include "Overcooked/Public/Actors/Client.h"
 #include "Engine/Engine.h"
 
 // Sets default values for this component's properties
@@ -54,6 +55,18 @@ bool UHolderComponent::CanReceiveHoldable(IHoldable* Holdable) const
 			return false;
 	}
 
+	if (CheckForClientTask) 
+	{
+		UActorComponent* ActorComponent = Cast<UActorComponent>(Holdable);
+		AClient* Client = Cast<AClient>(ActorComponent->GetOwner());
+
+		if (Client == nullptr)
+			return false;
+
+		if (Client->GetCurrentClientTask() != ClientTask)
+			return false;
+	}
+
 	return true;
 }
 
@@ -89,6 +102,14 @@ bool UHolderComponent::CanHoldableBeTaken() const
 IHoldable* UHolderComponent::GetHoldable() const
 {
 	return MyHoldable.GetInterface();
+}
+
+UHoldableComponent* UHolderComponent::GetHoldableComponent() const
+{
+	if (!IsHolding())
+		return nullptr;
+
+	return Cast<UHoldableComponent>(MyHoldable.GetInterface());
 }
 
 IHoldable* UHolderComponent::RemoveHoldable()

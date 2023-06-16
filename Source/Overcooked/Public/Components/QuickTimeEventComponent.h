@@ -12,6 +12,7 @@ class UEnhancedPlayerInput;
 class APlayerCharacter;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInitialize);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnFinished);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInitializeWithHoldable, FString, HoldableName);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnActionFinished, int, ActionIndex);
 
@@ -39,6 +40,8 @@ protected:
 private:
 	UPROPERTY(BlueprintAssignable)
 	FOnInitialize OnInitialize;
+	UPROPERTY(BlueprintAssignable)
+	FOnFinished OnFinished;
 	UPROPERTY(BlueprintAssignable)
 	FOnInitializeWithHoldable OnInitializeWithHoldable;
 	UPROPERTY(BlueprintAssignable)
