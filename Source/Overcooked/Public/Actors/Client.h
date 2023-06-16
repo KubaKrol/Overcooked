@@ -33,6 +33,9 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	int CurrentTaskIndex = 0;
 
+	UPROPERTY(VisibleAnywhere)
+	float Patience;
+
 #pragma endregion
 
 #pragma region Methods
@@ -50,7 +53,10 @@ public:
 	virtual UClientData* GetClientData() const;
 	virtual EClientTask GetCurrentClientTask() const;
 	UFUNCTION(BlueprintCallable)
+	virtual float GetPatience() const;
+	UFUNCTION(BlueprintCallable)
 	virtual void IncrementClientTaskIndex();
+	virtual void Disable();
 
 protected:
 	// Called when the game starts or when spawned

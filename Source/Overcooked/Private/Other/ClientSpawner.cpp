@@ -19,17 +19,26 @@ AClientSpawner::AClientSpawner()
 void AClientSpawner::BeginPlay()
 {
 	Super::BeginPlay();
-
-	Timer = SpawningInterval;
+	Timer = SpawningInterval - 1.0f;
 }
 
 AClient* AClientSpawner::SpawnClient()
 {
 	UClientManager* ClientManager = Cast<AOvercookedGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()))->GetClientManager();
+
+	if (ClientManager->GetCurrentClientsCount() >= MaxClients) 
+	{
+		CurrentSpawnLocationIndex = 0;
+		return nullptr;
+	}
+
 	AClient* Client = ClientManager->SpawnClient(
 		ClientsList[FMath::RandRange(0, ClientsList.Num() - 1)],
-		SpawningLocationActors[FMath::RandRange(0, SpawningLocationActors.Num() - 1)]->GetActorLocation(),
-		SpawningLocationActors[FMath::RandRange(0, SpawningLocationActors.Num() - 1)]->GetActorRotation());
+		SpawningLocationActors[CurrentSpawnLocationIndex]->GetActorLocation(),
+		SpawningLocationActors[CurrentSpawnLocationIndex]->GetActorRotation());
+
+	CurrentSpawnLocationIndex++;
+
 	return Client;
 }
 

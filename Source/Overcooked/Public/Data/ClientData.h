@@ -17,14 +17,19 @@ class OVERCOOKED_API UClientData : public UPrimaryDataAsset
 	
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FColor ClientColor;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float PatienceTime = 60.0f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FString WasherHoldableName = "Shampoo";
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
-	FString ChairHoldableName = "Scrissors";
+	FString ChairHoldableName = "Scissors";
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TArray<EClientTask> ClientTaskSequence;
+
+	
 };

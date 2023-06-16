@@ -37,6 +37,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	int GetCurrentClientsCount() const;
 
+	void RemoveClient(AClient* Client);
+
 protected:
 
 private:

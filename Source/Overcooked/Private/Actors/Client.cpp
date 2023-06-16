@@ -1,8 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "Overcooked/OvercookedGameModeBase.h"
+#include "Overcooked/Public/Interfaces/Holder.h"
 #include "Overcooked/Public/Components/HoldableComponent.h"
 #include "Overcooked/Public/Data/ClientData.h"
+#include "Overcooked/Public/Managers/ClientManager.h"
+#include "Overcooked/Public/UI/DefaultHUD.h"
+#include "Kismet/GameplayStatics.h"
 #include "Actors/Client.h"
 
 // Sets default values
@@ -28,6 +33,11 @@ void AClient::BeginPlay()
 void AClient::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	Patience += GetWorld()->DeltaTimeSeconds;
+
+	if (Patience >= GetClientData()->PatienceTime)
+		Disable();
 }
 
 // Called to bind functionality to input
@@ -46,6 +56,11 @@ EClientTask AClient::GetCurrentClientTask() const
 	return GetClientData()->ClientTaskSequence[CurrentTaskIndex];
 }
 
+float AClient::GetPatience() const
+{
+	return Patience / GetClientData()->PatienceTime;
+}
+
 void AClient::IncrementClientTaskIndex()
 {
 	if (CurrentTaskIndex + 1 == GetClientData()->ClientTaskSequence.Num())
@@ -54,5 +69,15 @@ void AClient::IncrementClientTaskIndex()
 	CurrentTaskIndex++;
 
 	UE_LOG(LogTemp, Warning, TEXT("The integer value is: %d"), CurrentTaskIndex);
+}
+
+void AClient::Disable()
+{
+	if (HoldableComponent->GetHolder() != nullptr)
+		HoldableComponent->GetHolder()->RemoveHoldable();
+
+	Cast<AOvercookedGameModeBase>(UGameplayStatics::GetGameMode(GetWorld()))->GetClientManager()->RemoveClient(this);
+	Cast<ADefaultHUD>(UGameplayStatics::GetPlayerController(GetWorld(), 0)->GetHUD())->RemoveClientCard(this);
+	Destroy();
 }
 

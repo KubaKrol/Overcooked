@@ -17,6 +17,9 @@ class OVERCOOKED_API AClientSpawner : public AActor
 
 public:
 	UPROPERTY(EditAnywhere)
+	int MaxClients = 6;
+
+	UPROPERTY(EditAnywhere)
 	float SpawningInterval = 10.0f;
 
 	UPROPERTY(EditAnywhere)
@@ -24,6 +27,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TArray<AActor*> SpawningLocationActors;
+
+	UPROPERTY(EditAnywhere)
+	int CurrentSpawnLocationIndex = 0;
 
 protected:
 
